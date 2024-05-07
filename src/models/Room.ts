@@ -1,12 +1,17 @@
 import { Mongoose, Schema, model } from "mongoose";
 
 const roomSchema = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
     host: {
         type: Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        required: true
     },
     participants: {
-        type: Schema.Types.Array,
+        type: String,
         enum: ["moderator", "user"]
     },
     messages: {

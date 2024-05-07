@@ -15,5 +15,6 @@ bun run src/app.ts
  ## API Routes
 - All API paths start at `/api/v1`
 - Auth routes `/register`, `/sign-in`  and `/logout` are accessed through the `/auth` route fragment.
+- Room routes mounted on `/rooms`. Delete and create actions have been implemented.
 
 E.g. to access the register route we send a aPOST request to `<domain_name.com>/api/v1/auth/register/`
