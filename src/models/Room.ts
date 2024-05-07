@@ -18,7 +18,7 @@ const roomSchema = new Schema({
         type: [Schema.Types.ObjectId],
         ref: "Message"
     }
-});
+}, { timestamps: true });
 
 const Room = model('Room', roomSchema);
 

@@ -5,7 +5,8 @@ const messageSchema = new Schema({
         type: String,
         required: true
     }
-})
+
+}, { timestamps: true })
 
 const Message = model('Message', messageSchema);
 
