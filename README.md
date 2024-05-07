@@ -1,0 +1,19 @@
+# ENSHAEDN
+
+To install dependencies:
+
+```bash
+bun install
+```
+
+To run:
+
+```bash
+bun run src/app.ts
+```
+
+ ## API Routes
+- All API paths start at `/api/v1`
+- Auth routes `/register`, `/sign-in`  and `/logout` are accessed through the `/auth` route fragment.
+
+E.g. to access the register route we send a aPOST request to `<domain_name.com>/api/v1/auth/register/`
