@@ -1,10 +1,11 @@
 import type { Request, Response } from "express";
 import Room from "../models/Room";
+import type { IAppRequest } from "../interfaces/AppRequest";
 
 class RoomController {
-    createRoom = async (req: Request, res: Response) => {
+    createRoom = async (req: IAppRequest, res: Response) => {
         const { name } = req.body;
-        const host = (req as any).user;
+        const host = req.user;
         if (!name) {
             return res.status(400).json("Room needs a name!")
         }
