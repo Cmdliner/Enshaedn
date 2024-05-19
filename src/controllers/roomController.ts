@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import Room from "../models/Room";
-import type { IAppRequest } from "../interfaces/AppRequest";
+import type { IAppRequest } from "../interfaces/RequestInterface";
 
 class RoomController {
     createRoom = async (req: IAppRequest, res: Response) => {

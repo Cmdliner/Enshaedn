@@ -23,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 // app.get('/chat', authMiddleware.requireAuth, chatController.handleChatEvents);
 app.use(`${path}/auth`, authRouter);
 app.use(`${path}/rooms`, authMiddleware.requireAuth, roomRouter);
+app.use(`${path}/user`, authMiddleware.requireAuth, )
 app.get('/protected', authMiddleware.requireAuth, (req: any, res: any) => res.status(200).json("Protected by a Shaed!"));
 
 // io.attach(server, { cors: corsOptions });

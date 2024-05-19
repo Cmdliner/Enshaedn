@@ -27,6 +27,7 @@ class AuthController {
             const token = createToken(user._id);
             res.cookie('Authorization', token, {
                 httpOnly: true,
+                sameSite: 'lax',
                 maxAge: 1000 * 60 * 60 * 24 // expires in a day
             });
             return res.status(201).json('User creation successful');
@@ -44,14 +45,14 @@ class AuthController {
         const authToken = req.cookies?.['Authorization'];
         if (authToken) return res.status(400).json("Already signed in");
         if (!user) {
-            return res.status(404).json("Invalid email or (password)!");
+            return res.status(404).json("Invalid email or password!");
         }
         const validPassword = await compare(password, user.password);
         if (!validPassword) {
-            return res.status(400).json("Invalid (email) or password!");
+            return res.status(400).json("Invalid email or password!");
         }
         const token = createToken(user._id);
-        res.cookie('Authorization', token, { maxAge: 1000 * 60 * 60 * 24 })
+        res.cookie('Authorization', token, { httpOnly: true, sameSite: 'lax',  maxAge: 1000 * 60 * 60 * 24 })
         return res.status(200).json("Login successful");
     }
 
