@@ -1,9 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
 import { verify } from "jsonwebtoken";
 import User from "../models/User";
+import type { Types } from "mongoose";
+import type { IAppRequest } from "../interfaces/RequestInterface";
 
 const authMiddleware = {
-    requireAuth: async (req: Request, res: Response, next: NextFunction) => {
+    requireAuth: async (req: IAppRequest, res: Response, next: NextFunction) => {
         const authToken = req.cookies?.['Authorization'];
         if (!authToken) {
             return res.status(401).json('Unauthorized!');
@@ -11,12 +13,12 @@ const authMiddleware = {
 
         try {
             const decodedToken = verify(authToken, process.env.JWT_SECRET!);
-            const { id } = decodedToken as any;
+            const { id } = decodedToken as any as Types.ObjectId;
             const user = await User.findById(id);
             if (!user) {
                 return res.status(404).json("User does not exist!");
             }
-            (req as any).user = user;
+            req.user = user;
             next();
         } catch (err) {
             return res.status(401).json({ "mssg": "Error in decoding", "err": (err as Error).message })

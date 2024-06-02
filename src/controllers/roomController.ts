@@ -1,6 +1,7 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import Room from "../models/Room";
 import type { IAppRequest } from "../interfaces/RequestInterface";
+import { isValidObjectId, type ObjectId } from "mongoose";
 
 class RoomController {
     createRoom = async (req: IAppRequest, res: Response) => {
@@ -16,27 +17,63 @@ class RoomController {
             return res.status(201).json("Room created successfully!");
         } catch (err) {
             console.error(err);
-            return res.status(500).json("Internal server error!");
+            return res.status(500).json({ errMssg: "Internal server error!" });
         }
 
     }
-    deleteRoom = async (req: Request, res: Response) => {
-        const { _id } = req.params;
+
+    joinRoom = async (req: IAppRequest, res: Response) => {
+        const { roomID } = req.params;
         try {
-            const room = await Room.findOne({ _id });
+            if (!isValidObjectId(roomID)) {
+                return res.status(400).json({ errMssg: "Invalid room ID!" });
+            }
+            const room = await Room.findById(roomID);
             if (!room) {
-                return res.status(404).json("Room not found");
+                return res.status(404).json({ errMssg: "Room not found!" })
             }
-            const canDelete = room.host.toString() === (req as any).user._id.toString();
-            if (!canDelete) {
-                return res.status(401).json("Unauthorized! can't delete room");
+            room?.participants?.push(req.user?._id!);
+            room.save();
+            return res.status(200).json({ mssg: "Room joined Successfully!" })
+        } catch (err) {
+            console.error(err)
+            return res.status(500).json({ errMssg: "Internal server error!" });
+        }
+    }
+    leaveRoom = async (req: IAppRequest, res: Response) => {
+        const { roomID } = req.params;
+        try {
+            if (!req.user) {
+                return res.status(200).json({ errMssg: "No authenticated user" })
             }
-            await Room.findOneAndDelete({ host: room.host });
+            const room = await Room.findById(roomID);
+            if (!room) {
+                return res.status(404).json({ errMssg: "Room not found!" })
+            }
+            room.participants = room.participants.filter((participant) => participant.toString() !== req.user?._id.toString());
+            room.save();
+            return res.status(200).json({ mssg: "Left room Successfully!" })
+        } catch (error) {
+            console.error(error)
+            return res.status(500).json({ errMssg: "Internal server error!" })
+        }
+    }
+    deleteRoom = async (req: IAppRequest, res: Response) => {
+        const { roomID } = req.params;
+        try {
+            const room = await Room.findOne({ _id: roomID });
+            await Room.findOneAndDelete({ host: room?.host });
             return res.status(200).json("Room deleted!");
 
         } catch (error) {
             return res.status(500).json("Internal server error!");
         }
+    }
+
+    sendMssg = async (req: IAppRequest, res: Response) => {
+        const sender = req.user!;
+        const { roomID } = req.params;
+
     }
 }
 

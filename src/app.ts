@@ -1,4 +1,4 @@
-import express from "express";
+import  express from "express";
 import authRouter from "./routes/auth";
 import roomRouter from "./routes/room";
 import mongoose from "mongoose";
@@ -11,7 +11,7 @@ const path = "/api/v1";
 const corsOptions: CorsOptions = {
     origin: process.env.CORS_ORIGIN!,
     credentials: true,
-    methods: ['GET', 'POST']
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
 }
 
 
@@ -24,7 +24,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(`${path}/auth`, authRouter);
 app.use(`${path}/rooms`, authMiddleware.requireAuth, roomRouter);
 app.use(`${path}/user`, authMiddleware.requireAuth, )
-app.get('/protected', authMiddleware.requireAuth, (req: any, res: any) => res.status(200).json("Protected by a Shaed!"));
 
 // io.attach(server, { cors: corsOptions });
 // io.on('connection', (_socket) => {

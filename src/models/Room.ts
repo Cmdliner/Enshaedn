@@ -11,14 +11,15 @@ const roomSchema = new Schema({
         required: true
     },
     participants: {
-        type: String,
-        enum: ["moderator", "user"]
+        type: [Schema.Types.ObjectId],
+        ref: "User"
     },
     messages: {
         type: [Schema.Types.ObjectId],
         ref: "Message"
     }
 }, { timestamps: true });
+
 
 const Room = model('Room', roomSchema);
 
