@@ -2,6 +2,7 @@ import type { Response } from "express";
 import Room from "../models/Room";
 import type { IAppRequest } from "../interfaces/RequestInterface";
 import { isValidObjectId, type ObjectId } from "mongoose";
+import Message from "../models/Message";
 
 class RoomController {
     createRoom = async (req: IAppRequest, res: Response) => {
@@ -69,8 +70,33 @@ class RoomController {
         }
     }
     sendMssg = async (req: IAppRequest, res: Response) => {
-        const sender = req.user!;
+        const sender = req.user?._id;
         const { roomID } = req.params;
+        const { content } = req.body;
+        const room = await Room.findById(roomID);
+        if(!room) {
+            return res.status(404).json({errMssg: "Room not found!"})
+        }
+        const message = new Message({sender: req.user?._id, text: content});
+        room.messages.push(message._id);
+        await room.save();
+        await message.save();
+        return res.status(200).json({mssg: "Message saved correctly"});
+
+    }
+    getRoomMessages =  async(req: IAppRequest, res: Response) => {
+        const { roomID } = req.params;
+        try {
+            const room = await Room.findById(roomID);
+            if (!room) {
+                return res.status(400).json({ errMssg: "No such room" });
+            }
+            const roomObj = await Room.findById(roomID).populate('messages').select('messages').exec();
+            return res.status(200).json({ messages: roomObj?.messages });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ errMssg: "Internal server error" });
+        }
 
     }
 }

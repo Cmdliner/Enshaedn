@@ -21,4 +21,5 @@ E.g. to access the register route we send a aPOST request to `<domain_name.com>/
 
 
 ## TODO
-- Use the short UUID pkg to route the rooms abstracting their actual id in the src code
+- Populate messages user field
+- Implement a socket.io server

@@ -13,7 +13,7 @@ class UserController {
         try {
             const currentUser = await User.findById(req.user);
             if (currentUser?.username !== username) {
-                return res.status(401).json({ errMssg: "Can not edit this profile!" });
+                return res.status(401).json({ errMssg: "Unauthorized! Can not edit this profile!" });
             }
             const user = await User.findOneAndUpdate({ username }, { username, password }, { new: true });
             await user?.save()
