@@ -6,7 +6,7 @@ import { isValidObjectId, type ObjectId } from "mongoose";
 class RoomController {
     createRoom = async (req: IAppRequest, res: Response) => {
         const { name } = req.body;
-        const host = req.user;
+        const host = req.user?._id;
         if (!name) {
             return res.status(400).json("Room needs a name!")
         }
@@ -21,7 +21,6 @@ class RoomController {
         }
 
     }
-
     joinRoom = async (req: IAppRequest, res: Response) => {
         const { roomID } = req.params;
         try {
@@ -69,7 +68,6 @@ class RoomController {
             return res.status(500).json("Internal server error!");
         }
     }
-
     sendMssg = async (req: IAppRequest, res: Response) => {
         const sender = req.user!;
         const { roomID } = req.params;

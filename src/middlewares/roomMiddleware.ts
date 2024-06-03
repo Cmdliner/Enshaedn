@@ -35,8 +35,9 @@ const roomMiddleware = {
 
             if (!room) return res.status(404).json({ errMssg: "Cannot find that room" });
             if (!user) return res.status(404).json({ errMssg: "User not found!" });
-            const userInRoom = room.participants.includes(userId);
-            if (!userInRoom) return res.status(401).json({ errMssg: `${req.user?.username} is not a participant of this room`});
+            const isParticipant = room.participants.includes(userId);
+            const isRoomHost = room.host.toString() === userId.toString();
+            if (!(isParticipant || isRoomHost)) return res.status(401).json({ errMssg: `${req.user?.username} is not a room participant`});
             next();
         } catch (error) {
             console.error(error)

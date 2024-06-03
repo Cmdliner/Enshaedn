@@ -12,16 +12,5 @@ export interface IAppRequest extends Request {
     } & {
         _id: Types.ObjectId;
     });
+
 }
-
-
-
-// Document<unknown, {}, {
-//     username: string;
-//     password: string;
-// }> & {
-//     username: string;
-//     password: string;
-// } & {
-//     _id: Types.ObjectId;
-// }

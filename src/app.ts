@@ -1,6 +1,7 @@
 import  express from "express";
 import authRouter from "./routes/auth";
 import roomRouter from "./routes/room";
+import userRouter from "./routes/user";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import authMiddleware from "./middlewares/authMiddleware";
@@ -20,17 +21,9 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// app.get('/chat', authMiddleware.requireAuth, chatController.handleChatEvents);
 app.use(`${path}/auth`, authRouter);
 app.use(`${path}/rooms`, authMiddleware.requireAuth, roomRouter);
-app.use(`${path}/user`, authMiddleware.requireAuth, )
-
-// io.attach(server, { cors: corsOptions });
-// io.on('connection', (_socket) => {
-//     console.log('New WebSocket connection')
-    
-// })
-
+app.use(`${path}/user`, authMiddleware.requireAuth, userRouter);
 
 
 mongoose.connect(process.env.MONGO_URI!)

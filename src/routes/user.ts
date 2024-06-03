@@ -6,3 +6,6 @@ const userController = new UserController();
 
 router.get('/', userController.getUser);
 router.put('/edit', userController.editProfile)
+router.get('/rooms', userController.getAllUserRooms);
+
+export default router;
