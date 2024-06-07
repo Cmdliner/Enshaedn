@@ -8,7 +8,7 @@ const authMiddleware = {
     requireAuth: async (req: IAppRequest, res: Response, next: NextFunction) => {
         const authToken = req.cookies?.['Authorization'];
         if (!authToken) {
-            return res.status(401).json('Unauthorized!');
+            return res.status(401).json({errMssg: 'Unauthorized!'});
         }
 
         try {
@@ -16,12 +16,12 @@ const authMiddleware = {
             const { id } = decodedToken as any as Types.ObjectId;
             const user = await User.findById(id);
             if (!user) {
-                return res.status(404).json("User does not exist!");
+                return res.status(404).json({errMssg: "User does not exist!"});
             }
             req.user = user;
             next();
         } catch (err) {
-            return res.status(401).json({ "mssg": "Error in decoding", "err": (err as Error).message })
+            return res.status(401).json({ "errMssg": "Error in decoding", "err": (err as Error).message })
         }
     }
 }

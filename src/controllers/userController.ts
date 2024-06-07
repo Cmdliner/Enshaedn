@@ -4,11 +4,13 @@ import type { IAppRequest } from "../interfaces/RequestInterface";
 import { Types } from "mongoose";
 import Room from "../models/Room";
 
+const ObjectId = Types.ObjectId;
+
 class UserController {
     editProfile = async (req: IAppRequest, res: Response) => {
         const { username, password } = req.body;
         if (!username || !password) {
-            return res.status(400).json({errMssg: "Not enough parameters"});
+            return res.status(400).json({ errMssg: "Not enough parameters" });
         }
         try {
             const currentUser = await User.findById(req.user);
@@ -19,7 +21,7 @@ class UserController {
             await user?.save()
             return res.status(200).json("Profile Updated")
         } catch (error) {
-		res.status(500).json({errMssg: error});
+            res.status(500).json({ errMssg: error });
         }
     }
     getUser = async (req: IAppRequest, res: Response) => {
@@ -32,21 +34,37 @@ class UserController {
             return res.status(200).json({ username: user.username })
         }
         catch (error) {
-		return res.status(500).json({errMssg: error})
+            return res.status(500).json({ errMssg: error })
         }
 
     }
     getAllUserRooms = async (req: IAppRequest, res: Response) => {
-        const ObjectId = Types.ObjectId;
+
         try {
             const hostRooms = await Room.find({ host: new ObjectId(req.user?._id!) }).select(['_id', 'name']).exec();
-            const participantRooms = await Room.find({participants: new ObjectId(req.user?._id)}).select(['_id', 'name']).exec();
-            return res.status(200).json({rooms: [...hostRooms, ...participantRooms]});
+            const participantRooms = await Room.find({ participants: new ObjectId(req.user?._id) }).select(['_id', 'name']).exec();
+            return res.status(200).json({ rooms: [...hostRooms, ...participantRooms] });
         } catch (error) {
             console.error(error)
-            return res.status(500).json({errMssg: error});
+            return res.status(500).json({ errMssg: error });
         }
     }
+    
+    /* 
+    // Get room queries will be moved to the client side as a client-side operation
+    getMatchedRoomOrAll = async (req: IAppRequest, res: Response) => {
+        const { q } = req.query;
+        try {
+            if (q) {
+                const hostRooms = await Room.find({ host: new ObjectId(req.user?._id) }).where('name').equals(q); // Find matches also
+                const participantRooms = await Room.find({ participants: new ObjectId(req.user?._id) }).equals(q);
+
+            }
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ errMssg: "Internal Server error" });
+        }
+    } */
 }
 
 export default UserController;

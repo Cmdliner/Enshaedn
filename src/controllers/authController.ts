@@ -16,10 +16,10 @@ class AuthController {
 
         try {
             if (!username || !password) {
-                return res.status(400).json({errorMssg: "Username or password field is required"});
+                return res.status(400).json({errMssg: "Username or password field is required"});
             }
             const userExists = await User.findOne({ username });
-            if (userExists) return res.status(400).json({errorMssg: "Username taken!"});
+            if (userExists) return res.status(400).json({errMssg: "Username taken!"});
 
             const user = await User.create({ username, password });
             user.password = await hash(password, 10);
@@ -28,12 +28,12 @@ class AuthController {
             res.cookie('Authorization', token, {
                 httpOnly: true,
                 sameSite: 'lax',
-                maxAge: 1000 * 60 * 60 * 24 // expires in a day
+                maxAge: 1000 * 60 * 60 * 24  * 7// expires in a week
             });
             return res.status(201).json({mssg: "User creation successful"});
         } catch (error) {
             console.error((error as Error))
-            res.status(500).json({ errorMssg: "Internal Server error!" })
+            res.status(500).json({ errMssg: "Internal Server error!" })
         }
 
     }
@@ -43,16 +43,16 @@ class AuthController {
         const user = await User.findOne({ username });
 
         const authToken = req.cookies?.['Authorization'];
-        if (authToken) return res.status(400).json({ errorMssg: "Already signed in" });
+        if (authToken) return res.status(400).json({ errMssg: "Already signed in" });
         if (!user) {
-            return res.status(404).json({ errorMssg: "Invalid username or password!" });
+            return res.status(404).json({ errMssg: "Invalid username or password!" });
         }
         const validPassword = await compare(password, user.password);
         if (!validPassword) {
-            return res.status(400).json({errorMssg: "Invalid username or password!"});
+            return res.status(400).json({errMssg: "Invalid username or password!"});
         }
         const token = createToken(user._id);
-        res.cookie('Authorization', token, { httpOnly: true, sameSite: 'lax', maxAge: 1000 * 60 * 60 * 24 })
+        res.cookie('Authorization', token, { httpOnly: true, sameSite: 'lax', maxAge: 1000 * 60 * 60 * 24 * 7 })
         return res.status(200).json({mssg: "Login successful"});
     }
 
