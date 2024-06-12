@@ -19,7 +19,7 @@ class UserController {
             }
             const user = await User.findOneAndUpdate({ username }, { username, password }, { new: true });
             await user?.save()
-            return res.status(200).json("Profile Updated")
+            return res.status(200).json({mssg: "Profile Updated"})
         } catch (error) {
             res.status(500).json({ errMssg: error });
         }
@@ -50,21 +50,6 @@ class UserController {
         }
     }
     
-    /* 
-    // Get room queries will be moved to the client side as a client-side operation
-    getMatchedRoomOrAll = async (req: IAppRequest, res: Response) => {
-        const { q } = req.query;
-        try {
-            if (q) {
-                const hostRooms = await Room.find({ host: new ObjectId(req.user?._id) }).where('name').equals(q); // Find matches also
-                const participantRooms = await Room.find({ participants: new ObjectId(req.user?._id) }).equals(q);
-
-            }
-        } catch (error) {
-            console.error(error);
-            return res.status(500).json({ errMssg: "Internal Server error" });
-        }
-    } */
 }
 
 export default UserController;

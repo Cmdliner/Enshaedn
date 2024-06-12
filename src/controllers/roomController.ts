@@ -21,6 +21,7 @@ class RoomController {
         }
 
     }
+
     joinRoom = async (req: IAppRequest, res: Response) => {
         const { roomID } = req.params;
         try {
@@ -39,14 +40,12 @@ class RoomController {
             return res.status(500).json({ errMssg: "Internal server error!" });
         }
     }
+
     leaveRoom = async (req: IAppRequest, res: Response) => {
         const { roomID } = req.params;
         try {
             if (!isValidObjectId(roomID)) {
-                return res.status(400).json({ errMssg: "Invalid ID!" })
-            }
-            if (!req.user) {
-                return res.status(200).json({ errMssg: "No authenticated user" })
+                return res.status(400).json({ errMssg: "Invalid Room ID!" })
             }
             const room = await Room.findById(roomID);
             if (!room) {
@@ -63,15 +62,16 @@ class RoomController {
             return res.status(500).json({ errMssg: "Internal server error!" })
         }
     }
+
     deleteRoom = async (req: IAppRequest, res: Response) => {
         const { roomID } = req.params;
         try {
             const room = await Room.findOne({ _id: roomID });
             await Room.findOneAndDelete({ host: room?.host });
-            return res.status(200).json("Room deleted!");
+            return res.status(200).json({mssg: "Room deleted!"});
 
         } catch (error) {
-            return res.status(500).json("Internal server error!");
+            return res.status(500).json({errMssg: "Internal server error!"});
         }
     }
     sendMssg = async (req: IAppRequest, res: Response) => {
@@ -88,6 +88,7 @@ class RoomController {
         return res.status(200).json({ mssg: "Message saved correctly!" });
 
     }
+
     deleteMssg = async (req: IAppRequest, res: Response) => {
         const { roomID, messageID } = req.params;
         if (!messageID) return res.status(400).json({ errMssg: "Invalid Chat ID!" });
@@ -106,6 +107,7 @@ class RoomController {
         }
 
     }
+
     getRoomMessages = async (req: IAppRequest, res: Response) => {
         const { roomID } = req.params;
         try {

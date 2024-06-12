@@ -27,17 +27,13 @@ const roomMiddleware = {
         const userId = req.user?._id;
         if (!isValidObjectId(roomID)) return res.status(400).json({ errMssg: "Room not found" });
         try {
-
-            if (!userId) return res.status(400).json({ errMssg: "Auth required!" });
-            if (!roomID) res.status(400).json({ errMssg: "Room not specified" });
-
             const room = await Room.findById(roomID);
             const user = await User.findById(userId);
 
             if (!room) return res.status(404).json({ errMssg: "Cannot find that room" });
             if (!user) return res.status(404).json({ errMssg: "User not found!" });
-            const isParticipant = room.participants.includes(userId);
-            const isRoomHost = room.host.toString() === userId.toString();
+            const isParticipant = room.participants.includes(userId!);
+            const isRoomHost = room.host.toString() === userId?.toString();
             if (!(isParticipant || isRoomHost)) return res.status(401).json({ errMssg: `${req.user?.username} is not a room participant` });
             next();
         } catch (error) {
