@@ -61,7 +61,7 @@ class AuthController {
 
     getAuthState = async (req: IAppRequest, res: Response) => {
         const authToken = req.cookies?.['Authorization'];
-        if (!authToken) return res.status(401).json({ errMssg: 'Unauthorized!' });
+        if (!authToken) return res.status(401).json({ authenticated: false});
         try {
             const decodedToken = verify(authToken, process.env.JWT_SECRET!);
             const { id } = decodedToken as any as Types.ObjectId;
