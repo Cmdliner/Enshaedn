@@ -122,7 +122,7 @@ class RoomController {
                     select: 'username'
                 }
             }).select('messages').exec();
-            return res.status(200).json({ messages: roomObj?.messages });
+            return res.status(200).json({currentUser: req.user?.username, messages: roomObj?.messages });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ errMssg: "Internal server error" });
