@@ -121,8 +121,8 @@ class RoomController {
                     path: 'sender',
                     select: 'username'
                 }
-            }).select('messages').exec();
-            return res.status(200).json({currentUser: req.user?.username, messages: roomObj?.messages });
+            }).select(['messages', 'name', 'host']).exec();
+            return res.status(200).json({room_name: roomObj?.name, host: roomObj?.host, currentUser: req.user?.username, messages: roomObj?.messages });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ errMssg: "Internal server error" });
