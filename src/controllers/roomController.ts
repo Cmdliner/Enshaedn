@@ -32,6 +32,9 @@ class RoomController {
             if (!room) {
                 return res.status(404).json({ errMssg: "Room not found!" })
             }
+
+            const isParticipant = room.participants?.find(member => member.toString() === req.user?._id.toString()) || room.host.toString() === req.user?._id.toString();
+            if(isParticipant) return res.status(400).json({errMssg: "Already a room participant!"});
             room?.participants?.push(req.user?._id!);
             room.save();
             return res.status(200).json({ mssg: "Room joined Successfully!", username: req.user?.username })
