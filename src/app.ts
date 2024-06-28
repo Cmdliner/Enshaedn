@@ -34,7 +34,7 @@ app.use(`${path}/user`, authMiddleware.requireAuth, userRouter);
 
 mongoose.connect(process.env.MONGO_URI!)
     .then(() => {
-        httpServer.listen(4000, () => {
+        httpServer.listen(process.env.PORT || 4000, () => {
             console.log('Server listening on port 4000');
         });
     })
