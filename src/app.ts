@@ -32,7 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(`${path}/auth`, authRouter);
 app.use(`${path}/rooms`, authMiddleware.requireAuth, roomRouter);
 app.use(`${path}/user`, authMiddleware.requireAuth, userRouter);
-app.get('/healthz', (req: Request, res: Response) => res.send("The hood is up Commandliner 🚀 🚀 🚀");
+app.get('/healthz', (req: Request, res: Response) => res.send("The hood is up Commandliner 🚀 🚀 🚀"));
         
 mongoose.connect(process.env.MONGO_URI!)
     .then(() => {
