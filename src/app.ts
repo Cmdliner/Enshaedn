@@ -8,6 +8,7 @@ import authMiddleware from "./middlewares/authMiddleware";
 import cors, { type CorsOptions } from "cors";
 import { Server } from "socket.io";
 import { createServer } from "http";
+import type { Request, Response } from "express";
 
 const corsOptions: CorsOptions = {
     origin: process.env.CORS_ORIGIN!,
@@ -31,7 +32,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(`${path}/auth`, authRouter);
 app.use(`${path}/rooms`, authMiddleware.requireAuth, roomRouter);
 app.use(`${path}/user`, authMiddleware.requireAuth, userRouter);
-
+app.get('/healthz', (req: Request, res: Response) => res.send("The hood is up Commandliner 🚀 🚀 🚀");
+        
 mongoose.connect(process.env.MONGO_URI!)
     .then(() => {
         httpServer.listen(process.env.PORT || 4000, () => {
