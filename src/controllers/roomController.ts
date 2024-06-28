@@ -1,18 +1,25 @@
 import type { Response } from "express";
 import Room from "../models/Room";
 import type { IAppRequest } from "../interfaces/RequestInterface";
-import { isValidObjectId } from "mongoose";
+import { isValidObjectId, Types } from "mongoose";
 import Message from "../models/Message";
 
+interface RoomInit {
+    name: string;
+    host: Types.ObjectId | undefined;
+    description?: string;
+}
 class RoomController {
     createRoom = async (req: IAppRequest, res: Response) => {
-        const { name } = req.body;
+        const { name, description } = req.body;
         const host = req.user?._id;
+        let roomInitOpts: RoomInit = { name, host };
+        if(description) roomInitOpts.description = description;
         if (!name) {
             return res.status(400).json("Room needs a name!")
         }
         try {
-            const room = await Room.create({ name, host });
+            const room = await Room.create(roomInitOpts);
             await room.save();
             return res.status(201).json({mssg: "Room created successfully!", username: req.user?.username, room_name: room.name});
         } catch (err) {
@@ -124,8 +131,8 @@ class RoomController {
                     path: 'sender',
                     select: 'username'
                 }
-            }).select(['messages', 'name', 'host']).exec();
-            return res.status(200).json({room_name: roomObj?.name, host: roomObj?.host, currentUser: req.user?.username, messages: roomObj?.messages });
+            }).select(['messages', 'name', 'host', 'description']).exec();
+            return res.status(200).json({room_name: roomObj?.name, host: roomObj?.host, description: roomObj?.description, currentUser: req.user?.username, messages: roomObj?.messages });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ errMssg: "Internal server error" });
@@ -141,7 +148,8 @@ class RoomController {
             }
             return res.status(200).json({
                 host: (room.host as any).username, participants: room.participants.map((participant: any) => participant.username),
-                name: room.name, createdAt: room.createdAt
+                name: room.name, description: room.description,
+                createdAt: room.createdAt
             })
         } catch (error) {
             console.error(error);

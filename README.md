@@ -54,5 +54,4 @@ E.g. to access the register route we send a POST request to `<domain_name.com>/a
 
 ## TODO
 - Implement a socket.io server
-- Delete chat
 - Validation Errors aren't handled correctly.

@@ -5,6 +5,10 @@ const roomSchema = new Schema({
         type: String,
         required: true
     },
+    description: {
+        type: String,
+        reqauired: false,
+    },
     host: {
         type: Schema.Types.ObjectId,
         ref: "User",
