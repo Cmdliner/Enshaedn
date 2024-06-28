@@ -3,7 +3,8 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun --watch src/app.ts"
+    "dev": "bun --watch src/app.ts",
+    "start": "bun --env-file .env src/app.ts"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

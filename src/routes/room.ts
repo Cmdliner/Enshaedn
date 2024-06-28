@@ -5,6 +5,7 @@ import roomMiddleware from "../middlewares/roomMiddleware";
 const rc = new RoomController();
 const router = Router();
 
+router.get("/", rc.queryRoomsOrGetAll);
 router.post("/create", rc.createRoom);
 router.post("/:roomID/join", rc.joinRoom);
 router.post("/:roomID/leave", roomMiddleware.isMember, rc.leaveRoom);
