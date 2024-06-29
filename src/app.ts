@@ -32,23 +32,24 @@ app.use(`${path}/rooms`, authMiddleware.requireAuth, roomRouter);
 app.use(`${path}/user`, authMiddleware.requireAuth, userRouter);
 app.get('/healthz', (_req: Request, res: Response) => res.send("The hood is up Commandliner 🚀 🚀 🚀"));
 
+
 io.on('connection', (socket) => {
-    console.log('A user connected!');
-
+    console.log('A user connected');
+  
     socket.on('joinRoom', (roomID: string) => {
-        socket.join(roomID);
-        console.log(`User joined room: ${roomID}`);
-    })
-
-    socket.on('sendMessage', (roomID) => {
-        io.to(roomID).emit('message');
-    })
-
+      socket.join(roomID);
+      console.log(`User joined room: ${roomID}`);
+    });
+  
+    socket.on('sendMessage', ({ roomID }) => {
+      io.to(roomID).emit('message');
+    });
+  
     socket.on('disconnect', () => {
-        console.log('A user disconnected');
-    })
-})
-
+      console.log('A user disconnected');
+    });
+  });
+  
 mongoose.connect(process.env.MONGO_URI!)
     .then(() => {
         httpServer.listen(process.env.PORT || 4000, () => {
