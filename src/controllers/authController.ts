@@ -25,7 +25,15 @@ class AuthController {
             user.password = await hash(password, 10);
             user.save();
             const token = createToken(user._id);
-            res.cookie('Authorization', token, { httpOnly: true, sameSite: 'None', secure: true, domain: 'adeyemiabiade.tech', maxAge: 1000 * 60 * 60 * 24 * 7 });
+            res.cookie('Authorization', token, 
+                { 
+                    httpOnly: true, 
+                    sameSite: 'none', 
+                    secure: true, 
+                    domain: 'adeyemiabiade.tech', 
+                    partitioned: true,
+                    maxAge: 1000 * 60 * 60 * 24 * 7 
+                });
             return res.status(201).json({ mssg: "User creation successful" });
         } catch (error) {
             console.error((error as Error))
@@ -48,7 +56,15 @@ class AuthController {
             return res.status(400).json({ errMssg: "Invalid username or password!" });
         }
         const token = createToken(user._id);
-        res.cookie('Authorization', token, { httpOnly: true, sameSite: 'None', secure: true, domain: 'adeyemiabiade.tech', maxAge: 1000 * 60 * 60 * 24 * 7 })
+        res.cookie('Authorization', token, 
+            { 
+                httpOnly: true, 
+                sameSite: 'none', 
+                secure: true, 
+                domain: 'adeyemiabiade.tech',
+                partitioned: true, 
+                maxAge: 1000 * 60 * 60 * 24 * 7 
+            })
         return res.status(200).json({ mssg: "Login successful" });
     }
 
