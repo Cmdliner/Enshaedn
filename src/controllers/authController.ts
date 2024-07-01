@@ -25,7 +25,7 @@ class AuthController {
             user.password = await hash(password, 10);
             user.save();
             const token = createToken(user._id);
-            res.setHeader('Authorization', token);
+            res.setHeader('Authorization', `Bearer ${token}`);
             return res.status(201).json({ mssg: "User creation successful" });
         } catch (error) {
             console.error((error as Error))
@@ -53,17 +53,12 @@ class AuthController {
         return res.status(200).json({ mssg: "Login successful" });
     }
 
-    logout = async (req: Request, res: Response) => {
-        if (!req.headers.authorization) { return res.status(401).json({ errMssg: 'Not yet logged in!' }) };
-        return res.status(200).json({ mssg: "Logged out!" });
-
-    }
 
     getAuthState = async (req: IAppRequest, res: Response) => {
-        const authToken = req.headers?.authorization;
+        const authToken = req.headers.authorization?.split(' ')?.[1];
         if (!authToken) return res.status(401).json({ authenticated: false});
         try {
-            const decodedToken = verify(authToken.toString(), process.env.JWT_SECRET!);
+            const decodedToken = verify(authToken, process.env.JWT_SECRET!);
             const { id } = decodedToken as any as Types.ObjectId;
             const user = await User.findById(id);
             if (!user) return res.status(400).json({ authenticated: false });
