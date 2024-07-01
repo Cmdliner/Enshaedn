@@ -6,13 +6,13 @@ import type { IAppRequest } from "../interfaces/RequestInterface";
 
 const authMiddleware = {
     requireAuth: async (req: IAppRequest, res: Response, next: NextFunction) => {
-        const authToken = req.cookies?.['Authorization'];
+        const authToken = req.headers?.authorization;
         if (!authToken) {
             return res.status(401).json({errMssg: 'Unauthorized!'});
         }
 
         try {
-            const decodedToken = verify(authToken, process.env.JWT_SECRET!);
+            const decodedToken = verify(authToken.toString(), process.env.JWT_SECRET!);
             const { id } = decodedToken as any as Types.ObjectId;
             const user = await User.findById(id);
             if (!user) {

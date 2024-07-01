@@ -25,13 +25,7 @@ class AuthController {
             user.password = await hash(password, 10);
             user.save();
             const token = createToken(user._id);
-            res.cookie('Authorization', token, 
-                { 
-                    httpOnly: true, 
-                    sameSite: 'none', 
-                    secure: true, 
-                    maxAge: 1000 * 60 * 60 * 24 * 7 
-                });
+            res.setHeader('Authorization', token);
             return res.status(201).json({ mssg: "User creation successful" });
         } catch (error) {
             console.error((error as Error))
@@ -44,7 +38,7 @@ class AuthController {
         const { username, password }: IUser = req.body;
         const user = await User.findOne({ username });
 
-        const authToken = req.cookies?.['Authorization'];
+        const authToken = req.headers?.['Authorization'];
         if (authToken) return res.status(400).json({ errMssg: "Already signed in" });
         if (!user) {
             return res.status(404).json({ errMssg: "Invalid username or password!" });
@@ -54,28 +48,22 @@ class AuthController {
             return res.status(400).json({ errMssg: "Invalid username or password!" });
         }
         const token = createToken(user._id);
-        res.cookie('Authorization', token, 
-            { 
-                httpOnly: true, 
-                sameSite: 'none', 
-                secure: true, 
-                maxAge: 1000 * 60 * 60 * 24 * 7 
-            })
+        req.headers.authorization = token;
+        res.setHeader('Authorization', token);
         return res.status(200).json({ mssg: "Login successful" });
     }
 
     logout = async (req: Request, res: Response) => {
-        if (!req.cookies?.['Authorization']) { return res.status(401).json({ errMssg: 'Not yet logged in!' }) };
-        res.clearCookie('Authorization');
+        if (!req.headers.authorization) { return res.status(401).json({ errMssg: 'Not yet logged in!' }) };
         return res.status(200).json({ mssg: "Logged out!" });
 
     }
 
     getAuthState = async (req: IAppRequest, res: Response) => {
-        const authToken = req.cookies?.['Authorization'];
+        const authToken = req.headers?.authorization;
         if (!authToken) return res.status(401).json({ authenticated: false});
         try {
-            const decodedToken = verify(authToken, process.env.JWT_SECRET!);
+            const decodedToken = verify(authToken.toString(), process.env.JWT_SECRET!);
             const { id } = decodedToken as any as Types.ObjectId;
             const user = await User.findById(id);
             if (!user) return res.status(400).json({ authenticated: false });
