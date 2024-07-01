@@ -30,7 +30,6 @@ class AuthController {
                     httpOnly: true, 
                     sameSite: 'none', 
                     secure: true, 
-                    domain: 'adeyemiabiade.tech', 
                     maxAge: 1000 * 60 * 60 * 24 * 7 
                 });
             return res.status(201).json({ mssg: "User creation successful" });
@@ -60,7 +59,6 @@ class AuthController {
                 httpOnly: true, 
                 sameSite: 'none', 
                 secure: true, 
-                domain: 'adeyemiabiade.tech',
                 maxAge: 1000 * 60 * 60 * 24 * 7 
             })
         return res.status(200).json({ mssg: "Login successful" });
