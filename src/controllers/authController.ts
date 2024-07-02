@@ -48,8 +48,7 @@ class AuthController {
             return res.status(400).json({ errMssg: "Invalid username or password!" });
         }
         const token = createToken(user._id);
-        req.headers.authorization = token;
-        res.setHeader('Authorization', token);
+        res.setHeader('Authorization', `Bearer ${token}`);
         return res.status(200).json({ mssg: "Login successful" });
     }
 

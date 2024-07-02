@@ -13,7 +13,8 @@ import type { Request, Response } from "express";
 const corsOptions: CorsOptions = {
     origin: process.env.CORS_ORIGIN!,
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE']
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    exposedHeaders: ["Authorization"] 
 }
 const app = express();
 const httpServer = createServer(app);

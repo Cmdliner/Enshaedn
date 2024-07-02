@@ -6,7 +6,7 @@ import type { IAppRequest } from "../interfaces/RequestInterface";
 
 const authMiddleware = {
     requireAuth: async (req: IAppRequest, res: Response, next: NextFunction) => {
-        const authToken = req.headers?.authorization?.split(' ')?.[1];
+        const authToken = req.headers?.authorization?.split(' ')[1];
         if (!authToken) {
             return res.status(401).json({errMssg: 'Unauthorized!'});
         }
@@ -21,9 +21,9 @@ const authMiddleware = {
             req.user = user;
             next();
         } catch (err) {
-	    console.error(err);
-	    if((err as Error).message === "jwt expired") {
-		return res.status(401).json({"errMssg": "Login session expired :("})
+            console.error(err);
+            if((err as Error).message === "jwt expired") {
+            return res.status(401).json({"errMssg": "Login session expired :("})
 	    }
             return res.status(401).json({ "errMssg": "Error in decoding", "err": (err as Error).message })
         }
