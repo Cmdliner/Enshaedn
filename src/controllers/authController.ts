@@ -13,7 +13,12 @@ const createToken = (payload: Types.ObjectId) => {
 
 class AuthController {
     signUp = async (req: Request, res: Response) => {
-        const { username, password }: IUser = req.body;
+        let { username, password }: IUser = req.body;
+
+        // Sanitize Input
+        username = username.trim();
+        password = password.trim();
+
         try {
             if (!username || !password) {
                 return res.status(400).json({ errMssg: "Username or password field is required" });
@@ -35,7 +40,12 @@ class AuthController {
     }
 
     signIn = async (req: Request, res: Response) => {
-        const { username, password }: IUser = req.body;
+        let { username, password }: IUser = req.body;
+
+        // Sanitize Input
+        username = username.trim();
+        password = password.trim();
+        
         const user = await User.findOne({ username });
 
         const authToken = req.headers?.['Authorization'];
