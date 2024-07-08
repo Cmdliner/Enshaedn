@@ -41,8 +41,8 @@ class UserController {
     getAllUserRooms = async (req: IAppRequest, res: Response) => {
 
         try {
-            const hostRooms = await Room.find({ host: new ObjectId(req.user?._id!) }).select(['_id', 'name', 'description']).exec();
-            const participantRooms = await Room.find({ participants: new ObjectId(req.user?._id) }).select(['_id', 'name']).exec();
+            const hostRooms = await Room.find({ host: new ObjectId(req.user?._id!) }).populate('host').select(['_id', 'name', 'description', 'host']).exec();
+            const participantRooms = await Room.find({ participants: new ObjectId(req.user?._id) }).populate('host').select(['_id', 'name', 'description', 'host']).exec();
             return res.status(200).json({ rooms: [...hostRooms, ...participantRooms] });
         } catch (error) {
             console.error(error)

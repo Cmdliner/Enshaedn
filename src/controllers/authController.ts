@@ -13,11 +13,8 @@ const createToken = (payload: Types.ObjectId) => {
 
 class AuthController {
     signUp = async (req: Request, res: Response) => {
-        let { username, password }: IUser = req.body;
+        const { username, password }: IUser = req.body;
 
-        // Sanitize Input
-        username = username.trim();
-        password = password.trim();
 
         try {
             if (!username || !password) {
@@ -40,15 +37,11 @@ class AuthController {
     }
 
     signIn = async (req: Request, res: Response) => {
-        let { username, password }: IUser = req.body;
+        const { username, password }: IUser = req.body;
 
-        // Sanitize Input
-        username = username.trim();
-        password = password.trim();
-        
         const user = await User.findOne({ username });
 
-        const authToken = req.headers?.['Authorization'];
+        const authToken = req.headers.authorization?.toString().split(' ')[1];
         if (authToken) return res.status(400).json({ errMssg: "Already signed in" });
         if (!user) {
             return res.status(404).json({ errMssg: "Invalid username or password!" });
@@ -64,7 +57,7 @@ class AuthController {
 
 
     getAuthState = async (req: IAppRequest, res: Response) => {
-        const authToken = req.headers.authorization?.split(' ')?.[1];
+        const authToken = req.headers.authorization?.toString().split(' ')[1];
         if (!authToken) return res.status(401).json({ authenticated: false});
         try {
             const decodedToken = verify(authToken, process.env.JWT_SECRET!);

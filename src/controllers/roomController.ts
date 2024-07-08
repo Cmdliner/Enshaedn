@@ -11,11 +11,8 @@ interface RoomInit {
 }
 class RoomController {
     createRoom = async (req: IAppRequest, res: Response) => {
-        let { name, description } = req.body;
+        const { name, description } = req.body;
 
-        // Sanitize Inputs
-        name =  name.trim();
-        description = description.trim();
 
         const host = req.user?._id;
         let roomInitOpts: RoomInit = { name, host };
@@ -144,6 +141,7 @@ class RoomController {
         }
 
     }
+    
     getRoomInfo = async (req: IAppRequest, res: Response) => {
         const { roomID } = req.params;
         try {
