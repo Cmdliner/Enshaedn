@@ -163,8 +163,8 @@ class RoomController {
     queryRoomsOrGetAll = async(req: IAppRequest, res: Response) => {
         const { name } = req.query;
         try{
-            if(name) {
-                const rooms = await Room.find({name: name}).populate('host').exec();
+            if(name && name.toString().trim()) {
+                const rooms = await Room.find({name: new RegExp(`${name}`, 'i')}).populate('host').exec();
                 return res.status(200).json({rooms});
             }
             const rooms = await Room.find().populate('host').exec();
