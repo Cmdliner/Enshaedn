@@ -1,9 +1,16 @@
 import { Schema, model } from "mongoose";
+import { nanoid } from "nanoid";
+
 
 const roomSchema = new Schema({
     name: {
         type: String,
         required: true
+    },
+    kind: {
+        type: String,
+        enum: ['public', 'private'],
+        default: 'public'
     },
     description: {
         type: String,
@@ -21,7 +28,12 @@ const roomSchema = new Schema({
     messages: [{
         type: Schema.Types.ObjectId,
         ref: "Message"
-    }]
+    }],
+    join_id: {
+        type: String,
+        required: true,
+        default: nanoid()
+    }
 }, { timestamps: true });
 
 

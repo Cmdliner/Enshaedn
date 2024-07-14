@@ -5,25 +5,31 @@ import { isValidObjectId, Types } from "mongoose";
 import Message from "../models/Message";
 
 interface RoomInit {
+    kind: string;
     name: string;
     host: Types.ObjectId | undefined;
     description?: string;
 }
 class RoomController {
     createRoom = async (req: IAppRequest, res: Response) => {
-        const { name, description } = req.body;
+        const { name, description, kind } = req.body;
 
 
         const host = req.user?._id;
-        let roomInitOpts: RoomInit = { name, host };
+        let roomInitOpts: Partial<RoomInit> = { name, host };
         if(description) roomInitOpts.description = description;
+        if(kind) roomInitOpts.kind = kind;
         if (!name) {
             return res.status(400).json("Room needs a name!")
         }
         try {
             const room = await Room.create(roomInitOpts);
             await room.save();
-            return res.status(201).json({mssg: "Room created successfully!", username: req.user?.username, room_name: room.name});
+            return res.status(201).json({
+                mssg: "Room created successfully!", 
+                username: req.user?.username, room_name: room.name, 
+                join_id: room.join_id, id: room._id 
+            });
         } catch (err) {
             console.error(err);
             return res.status(500).json({ errMssg: "Internal server error!" });
@@ -32,12 +38,10 @@ class RoomController {
     }
 
     joinRoom = async (req: IAppRequest, res: Response) => {
-        const { roomID } = req.params;
+        const { joinID } = req.params;
         try {
-            if (!isValidObjectId(roomID)) {
-                return res.status(400).json({ errMssg: "Invalid room ID!" });
-            }
-            const room = await Room.findById(roomID);
+
+            const room = await Room.findOne({ join_id: joinID });
             if (!room) {
                 return res.status(404).json({ errMssg: "Room not found!" })
             }
@@ -46,7 +50,7 @@ class RoomController {
             if(isParticipant) return res.status(400).json({errMssg: "Already a room participant!"});
             room?.participants?.push(req.user?._id!);
             room.save();
-            return res.status(200).json({ mssg: "Room joined Successfully!", username: req.user?.username })
+            return res.status(200).json({ mssg: "Room joined Successfully!", username: req.user?.username, room_id: room._id })
         } catch (err) {
             console.error(err)
             return res.status(500).json({ errMssg: "Internal server error!" });
@@ -86,6 +90,7 @@ class RoomController {
             return res.status(500).json({errMssg: "Internal server error!"});
         }
     }
+
     sendMssg = async (req: IAppRequest, res: Response) => {
         const { roomID } = req.params;
         const { content } = req.body;
@@ -146,13 +151,37 @@ class RoomController {
         const { roomID } = req.params;
         try {
             const room = await Room.findById(roomID).populate(['host', 'participants']);
+            
             if (!room) {
                 return res.status(404).json({ errMssg: "Room not found" });
             }
             return res.status(200).json({
-                host: (room.host as any).username, participants: room.participants.map((participant: any) => participant.username),
+                host: (room.host as any).username, 
+                participants: room.participants.map((participant: any) => participant.username),
                 name: room.name, description: room.description,
                 createdAt: room.createdAt
+            })
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ errMssg: "Internal server error!" })
+        }
+    }
+    
+    getJoinRoomInfo = async (req: IAppRequest, res: Response) => {
+        const { joinID } = req.params;
+        try {
+            const room = await Room.findOne({join_id: joinID}).populate(['host', 'participants']);
+            
+            if (!room) {
+                return res.status(404).json({ errMssg: "Room not found" });
+            }
+            return res.status(200).json({
+                host: (room.host as any).username, 
+                participants: room.participants.map((participant: any) => participant.username),
+                name: room.name, description: room.description,
+                createdAt: room.createdAt,
+                join_id: room.join_id,
+                room_id: room._id
             })
         } catch (error) {
             console.error(error);

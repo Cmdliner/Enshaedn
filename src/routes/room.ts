@@ -7,12 +7,13 @@ const router = Router();
 
 router.get("/", rc.queryRoomsOrGetAll);
 router.post("/create", rc.createRoom);
-router.post("/:roomID/join", rc.joinRoom);
+router.post("/:joinID/join", rc.joinRoom);
 router.post("/:roomID/leave", roomMiddleware.isMember, rc.leaveRoom);
 router.delete("/:roomID/delete", roomMiddleware.isHost, rc.deleteRoom);
 router.post("/:roomID/send", roomMiddleware.isMember, rc.sendMssg);
 router.delete("/:roomID/chat/:messageID/", roomMiddleware.isMember, roomMiddleware.isHostOrSender, rc.deleteMssg);
 router.get("/:roomID/messages", roomMiddleware.isMember, rc.getRoomMessages);
 router.get("/:roomID/info", rc.getRoomInfo);
+router.get("/:joinID/join_info", rc.getJoinRoomInfo);
 
 export default router;
