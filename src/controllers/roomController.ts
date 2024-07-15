@@ -3,12 +3,14 @@ import Room from "../models/Room";
 import type { IAppRequest } from "../interfaces/RequestInterface";
 import { isValidObjectId, Types } from "mongoose";
 import Message from "../models/Message";
+import { nanoid } from "nanoid";
 
 interface RoomInit {
     kind: string;
     name: string;
     host: Types.ObjectId | undefined;
     description?: string;
+    join_id: string;
 }
 class RoomController {
     createRoom = async (req: IAppRequest, res: Response) => {
@@ -17,6 +19,7 @@ class RoomController {
 
         const host = req.user?._id;
         let roomInitOpts: Partial<RoomInit> = { name, host };
+        roomInitOpts.join_id = nanoid();
         if(description) roomInitOpts.description = description;
         if(kind) roomInitOpts.kind = kind;
         if (!name) {

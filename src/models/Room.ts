@@ -1,5 +1,4 @@
 import { Schema, model } from "mongoose";
-import { nanoid } from "nanoid";
 
 
 const roomSchema = new Schema({
@@ -31,8 +30,7 @@ const roomSchema = new Schema({
     }],
     join_id: {
         type: String,
-        required: true,
-        default: nanoid()
+        required: true
     }
 }, { timestamps: true });
 
