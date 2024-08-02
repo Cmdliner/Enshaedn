@@ -13,7 +13,7 @@ const roomSchema = new Schema({
     },
     description: {
         type: String,
-        reqauired: false,
+        required: false,
     },
     host: {
         type: Schema.Types.ObjectId,

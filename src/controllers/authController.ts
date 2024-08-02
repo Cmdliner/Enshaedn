@@ -6,9 +6,9 @@ import type { Types } from "mongoose";
 import type { IAppRequest } from "../interfaces/RequestInterface";
 
 interface IUser { username: string, password: string }
-
+const jwtExpires = 60 * 60 * 24 * 14
 const createToken = (payload: Types.ObjectId) => {
-    return jwt.sign({ id: payload }, process.env.JWT_SECRET!, { expiresIn: "148h" })
+    return jwt.sign({ id: payload }, process.env.JWT_SECRET!, { expiresIn: jwtExpires })
 }
 
 class AuthController {
@@ -18,7 +18,7 @@ class AuthController {
 
         try {
             if (!username || !password) {
-                return res.status(400).json({ errMssg: "Username or password field is required" });
+                return res.status(400).json({ errMssg: `${!username ? 'username': 'password'} field is required` });
             }
             const userExists = await User.findOne({ username });
             if (userExists) return res.status(400).json({ errMssg: "Username taken!" });
@@ -31,7 +31,7 @@ class AuthController {
             return res.status(201).json({ mssg: "User creation successful" });
         } catch (error) {
             console.error((error as Error))
-            res.status(500).json({ errMssg: "Internal Server error!" })
+            res.status(500).json({ errMssg: "Error registering user!" })
         }
 
     }
@@ -46,13 +46,20 @@ class AuthController {
         if (!user) {
             return res.status(404).json({ errMssg: "Invalid username or password!" });
         }
-        const validPassword = await compare(password, user.password);
-        if (!validPassword) {
+        const passwordMatch = await compare(password, user.password);
+        if (!passwordMatch) {
             return res.status(400).json({ errMssg: "Invalid username or password!" });
         }
         const token = createToken(user._id);
         res.setHeader('Authorization', `Bearer ${token}`);
-        return res.status(200).json({ mssg: "Login successful" });
+        
+        /* 
+            jwtExpires is conmverted into milliseconds -> (jwtExpires * 1000)
+            This is added to the current date converted into numbers -> new Date.valueOf() + (1000 * jwt expires)
+            The entire expression returns a unix timestamp of the expiry date of the jwt token
+         */
+        const authExpiry = (new Date().valueOf() + (1000 * jwtExpires));
+        return res.status(200).json({ mssg: "Login successful", exp:  authExpiry});
     }
 
 
