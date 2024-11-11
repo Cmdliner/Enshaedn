@@ -11,7 +11,7 @@ import { createServer } from "http";
 import type { Request, Response } from "express";
 
 const corsOptions: CorsOptions = {
-    origin: process.env.CORS_ORIGIN!,
+    origin: process.env.CORS_ORIGIN,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     exposedHeaders: ["Authorization"] 
@@ -50,7 +50,7 @@ io.on('connection', (socket) => {
     });
   });
   
-mongoose.connect(process.env.MONGO_URI!)
+mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         httpServer.listen(process.env.PORT || 4000, () => {
             console.log('Server listening on port 4000');
@@ -58,7 +58,3 @@ mongoose.connect(process.env.MONGO_URI!)
     })
     .catch((err) => console.error(err));
 
-
-
-
-export { io };

@@ -12,7 +12,7 @@ const authMiddleware = {
         }
 
         try {
-            const decodedToken = verify(authToken, process.env.JWT_SECRET!);
+            const decodedToken = verify(authToken, process.env.JWT_SECRET);
             const { id } = decodedToken as any as Types.ObjectId;
             const user = await User.findById(id);
             if (!user) {

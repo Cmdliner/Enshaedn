@@ -6,9 +6,9 @@ import type { Types } from "mongoose";
 import type { IAppRequest } from "../interfaces/RequestInterface";
 
 interface IUser { username: string, password: string }
-const jwtExpires = 60 * 60 * 24 * 14
+const jwtExpires = 60 * 60 * 24 * 14;
 const createToken = (payload: Types.ObjectId) => {
-    return jwt.sign({ id: payload }, process.env.JWT_SECRET!, { expiresIn: jwtExpires })
+    return jwt.sign({ id: payload }, process.env.JWT_SECRET, { expiresIn: jwtExpires })
 }
 
 class AuthController {
@@ -67,7 +67,7 @@ class AuthController {
         const authToken = req.headers.authorization?.toString().split(' ')[1];
         if (!authToken) return res.status(401).json({ authenticated: false});
         try {
-            const decodedToken = verify(authToken, process.env.JWT_SECRET!);
+            const decodedToken = verify(authToken, process.env.JWT_SECRET);
             const { id } = decodedToken as any as Types.ObjectId;
             const user = await User.findById(id);
             if (!user) return res.status(400).json({ authenticated: false });

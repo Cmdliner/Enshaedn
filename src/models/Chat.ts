@@ -1,12 +1,10 @@
 import { Schema, model } from "mongoose";
 
 const chatSchema = new Schema({
-    
     messages: {
         type: [Schema.ObjectId],
         ref: 'Chat'
-    },
-      
+    }
 });
 
 
